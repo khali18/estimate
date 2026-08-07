@@ -1,0 +1,18 @@
+{
+  "name": "Ultimate Joy Home - Solar & Electrical Estimator",
+  "short_name": "UJH Estimate",
+  "description": "Offline Solar Load & Electrical Estimate Calculator & Invoice Generator for Ultimate Joy Home",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

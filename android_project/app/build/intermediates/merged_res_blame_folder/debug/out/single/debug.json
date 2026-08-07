@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.ultimatejoyhome.estimate.app-merged_res-28:/drawable_ic_launcher.png.flat",
+        "source": "com.ultimatejoyhome.estimate.app-main-30:/drawable/ic_launcher.png"
+    },
+    {
+        "merged": "com.ultimatejoyhome.estimate.app-merged_res-28:/drawable_ic_launcher_round.png.flat",
+        "source": "com.ultimatejoyhome.estimate.app-main-30:/drawable/ic_launcher_round.png"
+    }
+]

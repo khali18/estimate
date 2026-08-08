@@ -616,6 +616,87 @@ function previewAndPrintInvoice() {
     document.getElementById('invoice-preview-modal').classList.add('active');
 }
 
+function triggerPrintOrPDF() {
+    // 1. Check for Native Android WebView Bridge
+    if (window.AndroidPrint && typeof window.AndroidPrint.printPage === 'function') {
+        window.AndroidPrint.printPage();
+        return;
+    }
+
+    // 2. Web Browser & PWA fallback printing
+    try {
+        const printContent = document.getElementById('invoice-print-area').innerHTML;
+        const printFrame = document.createElement('iframe');
+        printFrame.style.position = 'fixed';
+        printFrame.style.right = '0';
+        printFrame.style.bottom = '0';
+        printFrame.style.width = '0';
+        printFrame.style.height = '0';
+        printFrame.style.border = '0';
+        document.body.appendChild(printFrame);
+
+        const frameDoc = printFrame.contentWindow.document;
+        frameDoc.open();
+        frameDoc.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${document.title}</title>
+                <style>
+                    body {
+                        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+                        padding: 24px;
+                        color: #000;
+                        background: #fff;
+                        margin: 0;
+                    }
+                    .inv-header { display: flex; justify-content: space-between; border-bottom: 2px solid #10b981; padding-bottom: 16px; margin-bottom: 20px; }
+                    .inv-brand { display: flex; align-items: center; gap: 14px; }
+                    .inv-brand img { width: 55px; height: 55px; border-radius: 6px; }
+                    .inv-brand-info h2 { font-size: 1.3rem; color: #0f172a; font-weight: 800; margin: 0; }
+                    .inv-brand-info p { font-size: 0.78rem; color: #059669; font-weight: 600; margin: 2px 0 0 0; }
+                    .inv-meta { text-align: right; }
+                    .inv-meta h3 { font-size: 1.4rem; color: #10b981; text-transform: uppercase; margin: 0; }
+                    .inv-meta p { font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0; }
+                    .inv-addresses { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; background: #f8fafc; padding: 14px; border-radius: 6px; border: 1px solid #e2e8f0; }
+                    .inv-address-box h4 { font-size: 0.75rem; text-transform: uppercase; color: #64748b; margin-bottom: 4px; }
+                    .inv-address-box p { font-weight: 600; color: #0f172a; margin: 0; }
+                    .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                    .inv-table th { background: #0f172a; color: #ffffff; padding: 8px 12px; font-size: 0.75rem; text-transform: uppercase; text-align: left; }
+                    .inv-table td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; }
+                    .inv-totals { width: 280px; margin-left: auto; margin-bottom: 20px; }
+                    .inv-totals table { width: 100%; }
+                    .inv-totals td { padding: 4px 8px; }
+                    .inv-totals .grand-total td { font-size: 1.1rem; font-weight: 800; color: #059669; border-top: 2px solid #059669; padding-top: 8px; }
+                    .inv-footer { border-top: 1px dashed #cbd5e1; padding-top: 14px; font-size: 0.75rem; color: #64748b; display: flex; justify-content: space-between; align-items: flex-end; }
+                    .signature-box { border-top: 1px solid #94a3b8; width: 180px; text-align: center; padding-top: 4px; font-weight: 600; color: #334155; }
+                    @media print {
+                        body { padding: 0; }
+                    }
+                </style>
+            </head>
+            <body>
+                ${printContent}
+            </body>
+            </html>
+        `);
+        frameDoc.close();
+
+        setTimeout(() => {
+            printFrame.contentWindow.focus();
+            printFrame.contentWindow.print();
+            setTimeout(() => {
+                if (document.body.contains(printFrame)) {
+                    document.body.removeChild(printFrame);
+                }
+            }, 1000);
+        }, 300);
+    } catch (e) {
+        console.warn("Iframe print fallback triggered window.print()", e);
+        window.print();
+    }
+}
+
 function closeInvoicePreviewModal() {
     document.getElementById('invoice-preview-modal').classList.remove('active');
 }

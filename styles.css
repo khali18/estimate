@@ -823,6 +823,7 @@ body {
   .bottom-nav,
   .modal-header,
   .modal-footer,
+  .main-content,
   .no-print {
     display: none !important;
   }
@@ -831,6 +832,7 @@ body {
     position: static !important;
     background: transparent !important;
     display: block !important;
+    padding: 0 !important;
   }
 
   .modal-content {
@@ -838,10 +840,19 @@ body {
     box-shadow: none !important;
     max-width: 100% !important;
     max-height: 100% !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+  }
+
+  .modal-body {
+    padding: 0 !important;
+    overflow: visible !important;
   }
 
   #invoice-print-area {
     padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
   }
 }
 

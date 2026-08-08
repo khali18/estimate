@@ -1,6 +1,11 @@
 package com.ultimatejoyhome.estimate;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -32,8 +37,41 @@ public class MainActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new WebViewClient());
         mWebView.setWebChromeClient(new WebChromeClient());
 
+        // Expose JavaScript Interface for Native Android Print / PDF support
+        mWebView.addJavascriptInterface(new WebAppInterface(this, mWebView), "AndroidPrint");
+
         // Loads the offline bundled web application from local assets
         mWebView.loadUrl("file:///android_asset/www/index.html");
+    }
+
+    // Native JavaScript Interface Bridge for Printing / Saving as PDF
+    public class WebAppInterface {
+        Context mContext;
+        WebView mWebView;
+
+        WebAppInterface(Context c, WebView webView) {
+            mContext = c;
+            mWebView = webView;
+        }
+
+        @JavascriptInterface
+        public void printPage() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    createWebPrintJob(mWebView);
+                }
+            });
+        }
+    }
+
+    private void createWebPrintJob(WebView webView) {
+        PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
+        if (printManager != null) {
+            String jobName = "Ultimate Joy Home Estimate";
+            PrintDocumentAdapter printAdapter = webView.createPrintDocumentAdapter(jobName);
+            printManager.print(jobName, printAdapter, new PrintAttributes.Builder().build());
+        }
     }
 
     @Override
@@ -45,4 +83,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
 
